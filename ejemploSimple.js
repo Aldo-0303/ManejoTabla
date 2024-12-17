@@ -12,6 +12,5 @@ fetch('https://stephen-king-api.onrender.com/api/books').then(res => res.json())
     new ManejoTabla({
         datos,
         idContenedorTabla: 'tabla',
-        paginacion: 10,
     });
 });
