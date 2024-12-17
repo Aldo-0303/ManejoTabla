@@ -15,32 +15,13 @@ class ManejoTabla {
         * RECOMENDABLE NO USAR EL MÉTODO map PARA DIRECTAMENTE ELIMINAR los campos que no se quieren mostrar, ya que si se hace esto y en el html
         * de las acciones se usa un campo que se eliminó, se mostrará un error de variable no definida
         * 
-        * IMPORTANTE X2: 
-        * Para que funcione correctamente el uso de esta clase la estructura del htm de la tabla debe ser la siguiente:
-        * 1. <div id="idContenedorTabla"></div> -> Contenedor de la tabla, el elemento padre que envolverá todo: el formulario
-        * para la búsqueda, la tabla y el footer para la paginación
-        * 2. <form> -> Formulario para la búsqueda que contendrá los elementos:
-        * 2.1 <div> -> 
-        *       2.1.1 <select> -> con un select con el id "filtro" que es donde se listarán los campos por los que se buscará
-        *       2.1.2 <input> -> con un input con el id "buscar" que es donde se escribirá el texto a buscar
-        *      2.1.3 <button> -> con un button que es el botón de búsqueda
-        * 2.2 <div> ->
-        *      2.2.1 <select> -> con un select con el id "mostrar" que es donde se seleccionará el número de filas por página
-        * 3. <table> -> Tabla que contendrá los datos
-        * 4. <thead> -> Cabecera de la tabla
-        * 5. <tr> -> Fila de la cabecera
-        * 6. <tbody> -> Cuerpo de la tabla
-        * 7. <footer> -> Pie de la tabla, aquí irá la paginación, en este elemento se debe poner dos divs hijos, el primero
-        * debe contener los botones de paginación con las clases btnPrimero, btnAnterior, btnSiguiente y btnUltimo y el segundo div
-        * contendrá la información de la paginación (este div puede estar vacío)
-        * 
         * AUTOR: ALDO 0303
         * FECHA DE LANZAMIENTO: 22/05/2024
         * VERSIÓN: 1.3
     */
     constructor({ datos = [], idContenedorTabla = '', paginacion = 5, acciones = false, tituloColAcciones = [], html = '', ocultarCampos = [], ordenColumnas = [], pdf = false, funcionPdf = null, parametrosPdf = []}) {
         this.datos = (typeof datos === 'string') ? JSON.parse(datos) : datos;
-         ordenColumnas.length > 0 ? this.datos = this.datos.map(dato => {
+        ordenColumnas.length > 0 ? this.datos = this.datos.map(dato => {
             let newDato = {};
             ordenColumnas.forEach(col => {
                 newDato[col] = dato[col];
@@ -52,6 +33,59 @@ class ManejoTabla {
             console.error('No se encontró el contenedor de la tabla');
             return;
         }
+        this.contenedorTabla.innerHTML = `
+            <form>
+                <div>
+                    <select name="filtro" class="filtro">
+                    </select>
+                    <input type="text" name="buscar" class="buscar" placeholder="Buscar" autocomplete="off">
+                    <button type="submit">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="10" cy="10" r="7" /><line x1="21" y1="21" x2="15" y2="15" /></svg>
+                    </button>
+                </div>
+                <div>
+                    <label for="mostrar">Mostrar:</label>
+                    <select name="mostrar" class="mostrar">
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                </div>
+            </form>
+            <table>
+                <thead>
+                    <tr>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="2">Cargando...</td>
+                    </tr>
+                </tbody>
+            </table>
+            <footer>
+                <div>
+                    <button class="btnPaginacion btnPrimero">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><polyline points="15 6 9 12 15 18" /></svg>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><polyline points="15 6 9 12 15 18" /></svg>
+                    </button>
+                    <button class="btnPaginacion btnAnterior">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><polyline points="15 6 9 12 15 18" /></svg>
+                    </button>
+                    <button class="btnPaginacion btnSiguiente">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><polyline points="9 6 15 12 9 18" /></svg>
+                    </button>
+                    <button class="btnPaginacion btnUltimo">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><polyline points="9 6 15 12 9 18" /></svg>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><polyline points="9 6 15 12 9 18" /></svg>
+                    </button>
+                </div>
+                <div>
+                </div>
+            </footer>
+        `;
         this.cuerpoTabla = this.contenedorTabla.querySelector('table').querySelector('tbody');
         this.formBusqueda = this.contenedorTabla.querySelector('form');
         if (pdf) {
@@ -62,7 +96,7 @@ class ManejoTabla {
             btnPdf.addEventListener('click', () => funcionPdf(...parametrosPdf));
         }
         this.idTimeout = null;
-        this.buscar = this.buscar.bind(this);
+        this.buscar = this.buscar.bind(this); // para que el this en el método buscar sea el de la clase y no el del evento que lo llama
         this.infoPaginacion = this.contenedorTabla.querySelector('footer').querySelectorAll('div')[1]
         this.btnsPaginacion = this.contenedorTabla.querySelector('footer').querySelectorAll('div')[0]
         this.btnsPaginacion.querySelector('button.btnPrimero').addEventListener('click', () => this.paginar('primera'));
@@ -80,12 +114,12 @@ class ManejoTabla {
             return;
         }
         this.formBusqueda.addEventListener('submit', this.buscar);
-        this.formBusqueda.querySelector('#filtro').innerHTML = Object.keys(this.datos[0]).map(key => {
+        this.formBusqueda.querySelector('.filtro').innerHTML = Object.keys(this.datos[0]).map(key => {
             if (this.ocultarCampos.includes(key)) return '';
             return `<option value="${key}">${key.toUpperCase()}</option>`
         }).join('');
-        this.formBusqueda.querySelector('#buscar').addEventListener('keyup', this.buscar);
-        this.formBusqueda.querySelector('#mostrar').value = this.paginacion; this.formBusqueda.querySelector('#mostrar').addEventListener('change', e => {
+        this.formBusqueda.querySelector('.buscar').addEventListener('keyup', this.buscar);
+        this.formBusqueda.querySelector('.mostrar').value = this.paginacion; this.formBusqueda.querySelector('.mostrar').addEventListener('change', e => {
             this.paginacion = parseInt(e.target.value);
             this.totalPaginas = Math.ceil(this.datosViendo.length / this.paginacion);
             this.paginaActual = 1;
