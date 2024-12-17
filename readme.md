@@ -79,5 +79,5 @@ Con este código es sufienciente para crear una tabla con paginación y busqueda
 3. Se muestran todos los campos de los objetos en el arreglo.
 4. Valores por defecto:
     - **Paginación**: 5 filas por página.
-    - **Busqueda**: el selector de busqueda por columnas toma el valor de la propiedad de los objetos en el arreglo.
+    - **Busqueda**: el selector de busqueda por columnas toma el valor de la primera propiedad de los objetos en el arreglo.
     - **Acciones**: No se muestran acciones por defecto.
